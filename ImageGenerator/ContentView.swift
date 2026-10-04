@@ -12,12 +12,28 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+            if let image = appManager.currentImage {
+                Image(nsImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+            } else {
+                StartView()
+            }
+        }
+        .overlay {
+            if appManager.isGenerating {
+                loadingView()
+            }
+        }
+    }
+    
+    private func loadingView() -> some View {
+        HStack(spacing: 8) {
+            ProgressView()
+            Text("Generating image...")
         }
         .padding()
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
     }
 }
 
