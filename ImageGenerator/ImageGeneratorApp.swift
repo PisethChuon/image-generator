@@ -9,8 +9,11 @@ import SwiftUI
 
 @main
 struct ImageGeneratorApp: App {var body: some Scene {
+        @State var appManager = AppManager()
+    
         Window("ImageGenerator", id: "main") {
             ContentView()
+                .environment(appManager)
         }
     }
 }

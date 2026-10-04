@@ -6,8 +6,20 @@ class ImageGenerator {
     var recipe = ImageGenerator.defualtRecipe
     var style: ImagePlaygroundStyle?
     
-    func generate() async throws {
+    var concepts: [ImagePlaygroundConcept] {
+        [ImagePlaygroundConcept.text(recipe)]
+    }
+    
+    func generate() async throws -> ImageCreator.CreatedImage {
+        guard let style else { throw ImageCreator.Error.creationFailed }
+        
         let imageCreator = try await ImageCreator()
+        let images = imageCreator.images(for: concepts, style: style, limit: 1)
+        for try await image in images {
+            return image
+        }
+        
+        throw ImageCreator.Error.creationFailed
     }
 }
 
