@@ -21,6 +21,11 @@ class ImageGenerator {
         
         throw ImageCreator.Error.creationFailed
     }
+    
+    func resetGenerator() {
+        recipe = ImageGenerator.defualtRecipe
+        style = nil
+    }
 }
 
 extension ImageGenerator {
