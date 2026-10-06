@@ -15,5 +15,11 @@ struct ImageGeneratorApp: App {var body: some Scene {
             ContentView()
                 .environment(appManager)
         }
+        .commands {
+            CommandMenu("Actions") {
+                ImageButtonView(displayForMenu: true)
+                    .environment(appManager)
+            }
+        }
     }
 }
