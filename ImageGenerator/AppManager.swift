@@ -6,22 +6,30 @@ import ImagePlayground
 class AppManager {
     let imageGenerator = ImageGenerator()
     var currentImage: NSImage?
+    var showPlayground = false
     
     private(set) var error: Error?
     private(set) var isGenerating = false
+    private var task: Task<Void, Never>?
     
     func generateImage() {
         error = nil
         isGenerating = true
+        task?.cancel()
         
-        Task {
+        task = Task {
             do {
                 let generatedImage = try await imageGenerator.generate()
                 currentImage = NSImage(cgImage: generatedImage.cgImage, size: .zero)
                 isGenerating = false
             } catch {
-                self.error = error
-                isGenerating = false
+                do {
+                    try Task.checkCancellation()
+                    self.error = error
+                    isGenerating = false
+                } catch {
+                    
+                }
             }
         }
     }
@@ -31,6 +39,19 @@ class AppManager {
         currentImage = nil
         error = nil
         isGenerating = false
+        task?.cancel()
+    }
+    
+    func remove(ingredient: String) {
+        if let index = imageGenerator.ingredients.firstIndex(of: ingredient) {
+            imageGenerator.ingredients.remove(at: index)
+        }
+        generateImage()
+    }
+    
+    func add(ingredient: String) {
+        imageGenerator.ingredients.append(ingredient)
+        generateImage()
     }
     
     var showKitchen: Bool {
@@ -41,6 +62,7 @@ class AppManager {
 extension View {
     func previewEnvironment(generateImage: Bool = true) -> some View {
         let appManager = AppManager()
+        appManager.imageGenerator.ingredients.append("Strawberry")
         return environment(appManager)
             .onAppear() {
                 if generateImage {

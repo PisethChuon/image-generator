@@ -18,6 +18,7 @@ struct ContentView: View {
                 StartView()
             }
         }
+        .frame(minWidth: ImageGenerator.imageSize, maxWidth: 400, minHeight: 550)
         .overlay {
             if appManager.isGenerating {
                 loadingView()

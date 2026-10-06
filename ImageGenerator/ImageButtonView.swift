@@ -1,31 +1,31 @@
-//
-//  ImageButtonView.swift
-//  ImageGenerator
-//
-//  Created by chuonpiseth on 5/10/26.
-//
-
 import SwiftUI
 
-struct ImageButtonView: View {
+
+struct ImageButtonsView: View {
     @Environment(AppManager.self) private var appManager
     var displayForMenu = false
+    
     
     var body: some View {
         if displayForMenu {
             Group {
                 regenerateButton
+                imagePlaygroundButton
                 shareButton
             }
         } else {
             regenerateButton
                 .toolbar {
+                    ToolbarItem {
+                        imagePlaygroundButton
+                    }
                     ToolbarItem(placement: .primaryAction) {
                         shareButton
                     }
                 }
         }
     }
+    
     
     private var regenerateButton: some View {
         Button("Regenerate", systemImage: "arrow.clockwise") {
@@ -36,6 +36,16 @@ struct ImageButtonView: View {
         .keyboardShortcut("r", modifiers: .command)
         .disabled(!appManager.showKitchen)
     }
+    
+    
+    private var imagePlaygroundButton: some View {
+        Button("Edit in Image Playground", systemImage: "apple.image.playground") {
+            appManager.showPlayground = true
+        }
+        .keyboardShortcut("i", modifiers: [.command, .shift])
+        .disabled(appManager.currentImage == nil)
+    }
+    
     
     @ViewBuilder
     private var shareButton: some View {
@@ -49,7 +59,8 @@ struct ImageButtonView: View {
     }
 }
 
+
 #Preview {
-    ImageButtonView(displayForMenu: true)
+    ImageButtonsView(displayForMenu: true)
         .previewEnvironment(generateImage: false)
 }
